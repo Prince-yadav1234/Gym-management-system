@@ -7,6 +7,7 @@ const Members = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [campus, setCampus] = useState('');
   const [membershipType, setMembershipType] = useState('basic');
   const { user } = useAuth();
 
@@ -15,24 +16,24 @@ const Members = () => {
   }, []);
 
   const fetchMembers = async () => {
-    const { data } = await API.get('/Members');
+    const { data } = await API.get('/members');
     setMembers(data);
   };
 
   const addMember = async (e) => {
     e.preventDefault();
     try {
-      await API.post('/Members', { name, email, phone, membershipType });
+      await API.post('/members', { name, email, phone, campus, membershipType });
       fetchMembers();
-      setName(''); setEmail(''); setPhone('');
+      setName(''); setEmail(''); setPhone(''); setCampus('');
     } catch (err) {
-      alert('Error adding member');
+      alert('Error adding member: ' + (err.response?.data?.message || err.message));
     }
   };
 
   const deleteMember = async (id) => {
     if (window.confirm('Are you sure?')) {
-      await API.delete(`/Members/${id}`);
+      await API.delete(`/members/${id}`);
       fetchMembers();
     }
   };
@@ -47,6 +48,7 @@ const Members = () => {
             <input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required />
             <input placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
             <input placeholder="Phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
+            <input placeholder="Campus" value={campus} onChange={(e) => setCampus(e.target.value)} />
             <select value={membershipType} onChange={(e) => setMembershipType(e.target.value)}>
               <option value="Monthly">Monthly</option>
               <option value="Yearly">Yearly</option>
@@ -63,6 +65,7 @@ const Members = () => {
               <th>Name</th>
               <th>Email</th>
               <th>Phone</th>
+              <th>Campus</th>
               <th>Membership</th>
               {user?.role === 'admin' && <th>Actions</th>}
             </tr>
@@ -73,6 +76,7 @@ const Members = () => {
                 <td>{m.name}</td>
                 <td>{m.email}</td>
                 <td>{m.phone}</td>
+                <td>{m.campus}</td>
                 <td>{m.membershipType}</td>
                 {user?.role === 'admin' && (
                   <td>
