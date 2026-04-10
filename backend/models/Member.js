@@ -12,6 +12,10 @@ const memberSchema = new mongoose.Schema({
   },
   age: Number,
   phone: String,
+  campus: {
+    type: String,
+    default: ''
+  },
   membershipType: {
     type: String,
     enum: ["Monthly", "Yearly"]
